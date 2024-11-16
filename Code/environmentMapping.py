@@ -109,13 +109,4 @@ class EnvironmentMappingTexture(CubeMap):
         scene.P = Pscene
 
         self.unbind()
-
-
-
-#class EnvironmentBox(DrawModelFromMesh):
-#    def __init__(self, scene, shader=EnvironmentShader(), width=200, height=200):
-#        self.done = False
-
-        #self.map = EnvironmentMappingTexture(width, height)
-
-        #DrawModelFromMesh.__init__(self, scene=scene, M=poseMatrix(), mesh=CubeMesh(shader.map), shader=shader, visible=False)
+        

@@ -65,7 +65,6 @@ class Mesh:
             self.tangents = np.zeros((self.vertices.shape[0], 3), dtype='f')
             self.binormals = np.zeros((self.vertices.shape[0], 3), dtype='f')
 
-        #TODO WS3
         for f in range(self.faces.shape[0]):
             # first calculate the face normal using the cross product of the triangle's sides
             a = self.vertices[self.faces[f, 1]] - self.vertices[self.faces[f, 0]]

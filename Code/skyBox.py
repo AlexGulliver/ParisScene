@@ -7,7 +7,6 @@ from texture import *
 from shaders import *
 from cubeMap import CubeMap
 
-
 class SkyBoxShader(BaseShaderProgram):
     "Skybox Shader Class"
     def __init__(self, name='skybox'):
@@ -23,8 +22,6 @@ class SkyBoxShader(BaseShaderProgram):
 
         self.uniforms['PVM'].bind(np.matmul(P, np.matmul(V, M)))
         #self.uniforms['PVM'].bind(np.matmul(V, M))
-
-
 
 class SkyBox(DrawModelFromMesh):
     "Skybox Class"

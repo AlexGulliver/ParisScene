@@ -306,11 +306,7 @@ def create_mesh(
 		)
 
 
-def fix_blender_textures(
-		textures: np,ndarray, 
-		faces: np.ndarray, 
-		vertices: np.ndarray
-	) -> Optional[np.ndarray]:
+def fix_blender_textures(textures, faces, vertices):
 	'''
 	Corrects the indexing of textures in Blender file for OpenGL.
 	Blender allows for multiple indexing of vertices and textures, which is not supported by OpenGL.
