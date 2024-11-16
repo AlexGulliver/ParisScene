@@ -17,12 +17,14 @@ class Camera:
         self.center = [0., 0., 0.]  # position of the centre
         self.update()               # calculate the view matrix
 
-    def update(self):
+    def update(self) -> None:
         '''
         Function to update the camera view matrix from parameters.
         first, we set the point we want to look at as centre of the coordinate system,
         then, we rotate the coordinate system according to phi and psi angles
         finally, we move the camera to the set distance from the point.
+        The matrices are combined in this specific order: 
+        Translation -> Rotation -> Translation.l
         '''
         # calculate the translation matrix for the view center (the point we look at)
         T0 = translationMatrix(self.center)

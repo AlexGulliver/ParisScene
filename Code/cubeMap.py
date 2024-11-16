@@ -6,6 +6,8 @@ from BaseModel import DrawModelFromMesh
 from matutils import *
 from shaders import *
 
+from typing import Optional, Dict
+
 
 class FlattenedCubeShader(BaseShaderProgram):
     '''
@@ -23,9 +25,10 @@ class FlattenCubeMap(DrawModelFromMesh):
     Class for drawing the cube faces flattened on the screen (for debugging purposes)
     '''
 
-    def __init__(self, scene, cube=None):
+    def __init__(self, scene, cube: Optional[Texture] = None) -> None:
         '''
-        Initialises the
+        Initialises the flattened cube.
+
         :param scene: The scene object.
         :param cube: [optional] if not None, the cubemap texture to draw (can be set at a later stage using the set() method)
         '''
@@ -113,9 +116,10 @@ class FlattenCubeMap(DrawModelFromMesh):
         # Finishes initialising the mesh
         DrawModelFromMesh.__init__(self, scene=scene, M=poseMatrix(position=[0,0,+1]), mesh=mesh, shader=FlattenedCubeShader(), visible=False)
 
-    def set(self, cube):
+    def set(self, cube: Texture) -> None:
         '''
         Set the cube map to display
+
         :param cube: A CubeMap texture
         '''
         self.mesh.textures = [cube]
@@ -126,7 +130,13 @@ class CubeMap(Texture):
     Class for handling a cube map texture.
 
     '''
-    def __init__(self, name=None, files=None, wrap=GL_CLAMP_TO_EDGE, sample=GL_LINEAR, format=GL_RGBA, type=GL_UNSIGNED_BYTE):
+    def __init__(self, name: Optional[str] = None, 
+                 files: Optional[Dict[int, str]] = None,
+                 wrap: int = GL_CLAMP_TO_EDGE, 
+                 sample: int = GL_LINEAR, 
+                 format: int = GL_RGBA, 
+                 type: int = GL_UNSIGNED_BYTE
+                ) -> None:
         '''
         Initialise the cube map texture object
         :param name: If a name is provided, the function will load the faces of the cube from files on the disk in a
@@ -175,9 +185,10 @@ class CubeMap(Texture):
         # unbind the texture
         self.unbind()
 
-    def set(self, name, files=None):
+    def set(self, name: str, files: Optional[Dict[int, str]] = None) -> None:
         '''
         Load the cube's faces from images on the disk
+
         :param name: The folder in which the images are.
         :param files: A dictionary containing the file name for each face.
         '''
@@ -192,9 +203,8 @@ class CubeMap(Texture):
             # convert the python image object to a plain byte array for passsing to OpenGL
             glTexImage2D(key, 0, self.format, img.width(), img.height(), 0, self.format, self.type, img.data(self.format))
 
-    def update(self, scene):
-        '''
-        Used to update the texture, does not do anything at the moment, but could be extended for the environment mapping.
-        '''
-        pass
-
+    # def update(self, scene):
+    #     '''
+    #     Used to update the texture, does not do anything at the moment, but could be extended for the environment mapping.
+    #     '''
+    #     pass
