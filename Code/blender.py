@@ -3,16 +3,19 @@ import numpy as np
 from material import Material,MaterialLibrary
 from mesh import Mesh
 
+from typing import Optional, List, Tuple, Union
+
 '''
 Functions for reading models from blender. 
 Source: 
 https://en.wikipedia.org/wiki/Wavefront_.obj_file
 '''
 
-def process_line(line):
+def process_line(line: str) -> Optional[Tuple[str, Union[List[float], str, List[List[np.uint32]]]]]:
 	'''
-	Function for reading the Blender3D object file, line by line. Clearly
-	minimalistic and slow as it is, but it will do the job nicely for this course.
+	Function for reading the Blender3D object file, line by line. 
+
+	:param line: A single line from the `.obj` file.
 	'''
 	label = None
 	fields = line.split()
@@ -77,7 +80,12 @@ def process_line(line):
 	return (label, [float(token) for token in fields[1:]])
 
 
-def load_material_library(file_name):
+def load_material_library(file_name: str) -> MaterialLibrary:
+	'''
+	Loads material library from mtl files.
+
+	:param file_name: Path to mtl file.
+	'''
 	library = MaterialLibrary()
 	material = None
 
@@ -117,10 +125,11 @@ def load_material_library(file_name):
 	return library
 
 
-def load_obj_file(file_name):
+def load_obj_file(file_name: str) -> List[Mesh]:
 	'''
-	Function for loading a Blender3D object file. minimalistic, and partial,
-	but sufficient for this course. You do not really need to worry about it.
+	Function for loading a Blender3D object file.
+
+	:param file_name: path to obj file. 
 	'''
 	print('Loading mesh(es) from Blender file: {}'.format(file_name))
 
@@ -194,7 +203,27 @@ def load_obj_file(file_name):
 	return create_meshes_from_blender(vlist, flist, mlist, tlist, library, mesh_list, lnlist)
 
 
-def create_meshes_from_blender(vlist, flist, mlist, tlist, library, mesh_list, lnlist):
+def create_meshes_from_blender(
+    vlist: List[List[float]], 
+    flist: List[List[List[np.uint32]]], 
+    mlist: List[Union[int, None]], 
+    tlist: List[List[float]], 
+    library: MaterialLibrary, 
+    mesh_list: List[int], 
+    lnlist: List[int]
+) -> List[Mesh]:
+	'''
+	Creates list of Mesh objects from blender obj files.
+
+    :param vlist: List of vertex positions, where each vertex is a list of floats (x, y, z).
+    :param flist: List of faces, where each face is a list of indices for vertices and textures.
+    :param mlist: List of materials associated with faces, indexed per face.
+    :param tlist: List of texture coordinates, where each entry is a list of floats (u, v).
+    :param library: The material library containing all materials used in the meshes.
+    :param mesh_list: List of integers denoting the mesh ID for each face.
+    :param lnlist: List of line numbers in the OBJ file where each face is defined.
+    :return: A list of Mesh objects, each representing a separate part of the model.
+	'''
 	fstart = 0
 	mesh_id = 1
 	meshes = []
@@ -235,7 +264,28 @@ def create_meshes_from_blender(vlist, flist, mlist, tlist, library, mesh_list, l
 	return meshes
 
 
-def create_mesh(varray, tarray, flist, fstart, f, library, material):
+def create_mesh(
+		varray: np.ndarray, 
+		tarray: np.ndarray, 
+		flist: List[List[List[np.uint32]]], 
+		fstart: int, 
+		f: int, 
+		library: MaterialLibrary, 
+		material: int
+	) -> Mesh:
+	'''
+    Creates a single mesh from vertex, texture, and face data.
+
+    :param varray: Array of vertices, shape (N, 3), where N is the number of vertices.
+    :param tarray: Array of texture coordinates, shape (M, 2), where M is the number of textures.
+    :param flist: List of faces, where each face contains indices for vertices, textures, etc.
+    :param fstart: Start index of faces for this mesh.
+    :param f: End index of faces for this mesh.
+    :param library: The material library containing materials used in the mesh.
+    :param material: Index of the material used for this mesh.
+    :return: A Mesh object containing vertices, faces, material, and texture coordinates.
+	'''
+
 	# select faces for this mesh
 	farray = np.array(flist[fstart:f], dtype=np.uint32)
 
@@ -256,7 +306,11 @@ def create_mesh(varray, tarray, flist, fstart, f, library, material):
 		)
 
 
-def fix_blender_textures(textures, faces, vertices):
+def fix_blender_textures(
+		textures: np,ndarray, 
+		faces: np.ndarray, 
+		vertices: np.ndarray
+	) -> Optional[np.ndarray]:
 	'''
 	Corrects the indexing of textures in Blender file for OpenGL.
 	Blender allows for multiple indexing of vertices and textures, which is not supported by OpenGL.
