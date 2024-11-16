@@ -27,7 +27,7 @@ Press S to start animation
 
 Press F to stop animation
 
-Press C to display cube mapl
+Press C to display cube map
 
 ### Credits
 
