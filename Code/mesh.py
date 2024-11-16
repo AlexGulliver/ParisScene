@@ -1,8 +1,9 @@
+'''Mesh Classes.'''
+
 from material import Material
 import numpy as np
 
 from texture import Texture
-
 
 class Mesh:
     '''

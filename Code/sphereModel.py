@@ -1,3 +1,5 @@
+'''Sphere Class - inherits from Mesh to create a sphere mesh.'''
+
 from BaseModel import BaseModel
 from matutils import poseMatrix
 # imports all openGL functions

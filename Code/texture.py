@@ -1,3 +1,5 @@
+'''Texture Class to load texture files and store in OpenGL.'''
+
 import pygame
 from OpenGL.GL import *
 import numpy as np

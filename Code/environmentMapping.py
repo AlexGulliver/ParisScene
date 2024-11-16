@@ -1,3 +1,5 @@
+'''EnvironmentShader and EnvironmentMappingTexture class.''' 
+
 from BaseModel import BaseModel,DrawModelFromMesh
 from mesh import *
 
@@ -8,7 +10,6 @@ from cubeMap import CubeMap
 from shaders import *
 
 from framebuffer import Framebuffer
-
 
 class EnvironmentShader(BaseShaderProgram):
     def __init__(self, name='environment', map=None):

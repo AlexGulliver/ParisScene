@@ -1,3 +1,5 @@
+'''ShowTexture Class'''
+
 from BaseModel import *
 
 def normalize(v):

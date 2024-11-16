@@ -1,3 +1,5 @@
+'''Scene Class.'''
+
 # pygame is just used to create a window with the operating system on which to draw.
 import pygame
 

@@ -1,5 +1,6 @@
-import numpy as np
+'''Matrix utilities.'''
 
+import numpy as np
 
 def scaleMatrix(scale):
     if np.isscalar(scale):

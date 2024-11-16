@@ -1,3 +1,5 @@
+'''LightSource Class.'''
+
 import numpy as np
 
 class LightSource:

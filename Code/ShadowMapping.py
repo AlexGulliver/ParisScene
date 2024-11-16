@@ -1,3 +1,5 @@
+'''Shadow Mapping'''
+
 from OpenGL.GL import *
 from matutils import *
 

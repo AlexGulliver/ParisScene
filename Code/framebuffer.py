@@ -1,5 +1,6 @@
-from OpenGL.GL import *
+'''Framebuffer Class.'''
 
+from OpenGL.GL import *
 
 class Framebuffer:
     '''

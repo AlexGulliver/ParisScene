@@ -1,3 +1,5 @@
+'''Material and MaterialLibarry Class.'''
+
 class Material:
     def __init__(self, name=None, Ka=[1.,1.,1.], Kd=[1.,1.,1.], Ks=[1.,1.,1.], Ns=10.0, texture=None):
         self.name = name

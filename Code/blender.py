@@ -62,7 +62,6 @@ def process_line(line):
 			print('(E) Error, 3 or 4 entries expected for faces\n{}'.format(line))
 			return None
 
-
 		# multiple formats for faces lines, eg
 		# f 586/1 1860/2 1781/3
 		# f vi/ti/ni

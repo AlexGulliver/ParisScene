@@ -1,3 +1,5 @@
+'''BaseModel and DrawModelFromMesh Class.'''
+
 # imports all openGL functions
 from OpenGL.GL import *
 
@@ -13,6 +15,7 @@ from texture import Texture
 
 import sys
 
+from typing import Optional, Dict, Any, Union
 
 class BaseModel:
     '''
@@ -20,7 +23,15 @@ class BaseModel:
     Inherit from this to create new models.
     '''
 
-    def __init__(self, scene, M=poseMatrix(), mesh=Mesh(), color=[1., 1., 1.], primitive=GL_TRIANGLES, visible=True):
+    def __init__(
+        self, 
+        scene: Any, 
+        M: np.ndarray = poseMatrix(), 
+        mesh: Mesh = Mesh(), 
+        color: list[float] = [1.0, 1.0, 1.0], 
+        primitive: int = GL_TRIANGLES, 
+        visible: bool = True
+    ) -> None:
         '''
         Initialises the model data
         '''
@@ -55,7 +66,6 @@ class BaseModel:
         #self.textureCoords = None
         #self.textures = []
 
-
         # dict of VBOs
         self.vbos = {}
 
@@ -71,7 +81,7 @@ class BaseModel:
         # this buffer will be used to store indices, if using shared vertex representation
         self.index_buffer = None
 
-    def initialise_vbo(self, name, data):
+    def initialise_vbo(self, name: str, data: Optional[np.ndarray]) -> None:
         print('Initialising VBO for attribute {}'.format(name))
 
         if data is None:
@@ -100,7 +110,7 @@ class BaseModel:
         # ... and we set the data in the buffer as the vertex array
         glBufferData(GL_ARRAY_BUFFER, data, GL_STATIC_DRAW)
 
-    def bind_shader(self, shader):
+    def bind_shader(self, shader: Union[str, Any]) -> None:
         '''
         If a new shader is bound, we need to re-link it to ensure attributes are correctly linked.  
         '''
@@ -113,7 +123,7 @@ class BaseModel:
             # bind all attributes and compile the shader
             self.shader.compile(self.attributes)
 
-    def bind(self):
+    def bind(self) -> None:
         '''
         This method stores the vertex data in a Vertex Buffer Object (VBO) that can be uploaded
         to the GPU at render time.
@@ -143,7 +153,7 @@ class BaseModel:
         glBindVertexArray(0)
         glBindBuffer(GL_ARRAY_BUFFER, 0)
 
-    def draw(self, Mp=poseMatrix()):
+    def draw(self, Mp: np.ndarray = poseMatrix()) -> None:
         '''
         Draws the model using OpenGL functions.
         :param Mp: The model matrix of the parent object, for composite objects.
@@ -198,7 +208,15 @@ class DrawModelFromMesh(BaseModel):
     Base class for all models, inherit from this to create new models
     '''
 
-    def __init__(self, scene, M, mesh, name=None, shader=None, visible=True):
+    def __init__(
+        self, 
+        scene: Any, 
+        M: np.ndarray, 
+        mesh: Mesh, 
+        name: Optional[str] = None, 
+        shader: Optional[Any] = None, 
+        visible: bool = True
+    ) -> None:
         '''
         Initialises the model data
         '''

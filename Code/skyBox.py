@@ -1,3 +1,5 @@
+'''Skybox Class'''
+
 from BaseModel import BaseModel,DrawModelFromMesh
 from mesh import *
 from matutils import *
@@ -7,6 +9,7 @@ from cubeMap import CubeMap
 
 
 class SkyBoxShader(BaseShaderProgram):
+    "Skybox Shader Class"
     def __init__(self, name='skybox'):
         BaseShaderProgram.__init__(self, name=name)
         self.add_uniform('sampler_cube')
@@ -24,6 +27,7 @@ class SkyBoxShader(BaseShaderProgram):
 
 
 class SkyBox(DrawModelFromMesh):
+    "Skybox Class"
     def __init__(self, scene):
         DrawModelFromMesh.__init__(self, scene=scene, M=poseMatrix(scale=10.0),
                                    mesh=CubeMesh(texture=CubeMap(name='skybox/ame_ash'), inside=True),

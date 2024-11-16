@@ -1,3 +1,5 @@
+'''FlattenedCubeShader, FlattenCubeMap and CubeMap class.'''
+
 from texture import *
 from mesh import Mesh
 from BaseModel import DrawModelFromMesh
@@ -144,12 +146,12 @@ class CubeMap(Texture):
 
         # This dictionary contains the file name for each face, if loading from disk (otherwise ignored)
         self.files = {
-            GL_TEXTURE_CUBE_MAP_NEGATIVE_X: 'left.bmp',
-            GL_TEXTURE_CUBE_MAP_POSITIVE_Z: 'back.bmp',
-            GL_TEXTURE_CUBE_MAP_POSITIVE_X: 'right.bmp',
-            GL_TEXTURE_CUBE_MAP_NEGATIVE_Z: 'front.bmp',
-            GL_TEXTURE_CUBE_MAP_POSITIVE_Y: 'bottom.bmp',
-            GL_TEXTURE_CUBE_MAP_NEGATIVE_Y: 'top.bmp',
+            GL_TEXTURE_CUBE_MAP_NEGATIVE_X: 'paris_left.bmp',
+            GL_TEXTURE_CUBE_MAP_POSITIVE_Z: 'paris_front.bmp',
+            GL_TEXTURE_CUBE_MAP_POSITIVE_X: 'paris_right.bmp',
+            GL_TEXTURE_CUBE_MAP_NEGATIVE_Z: 'paris_back.bmp',
+            GL_TEXTURE_CUBE_MAP_POSITIVE_Y: 'paris_down.bmp',
+            GL_TEXTURE_CUBE_MAP_NEGATIVE_Y: 'paris_up.bmp',
         }
 
         # generate the texture.

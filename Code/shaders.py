@@ -1,3 +1,5 @@
+'''Shader code for loading and compiling GLSL shaders.'''
+
 # imports all openGL functions
 from OpenGL.GL import *
 from OpenGL.GL import shaders
