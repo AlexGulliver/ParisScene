@@ -34,6 +34,13 @@ class BaseModel:
     ) -> None:
         '''
         Initialises the model data
+
+        :param scene: Scene object.
+        :param M: Model matrix.
+        :param mesh: Mesh data.
+        :param color: Object colour.
+        :param primitive: OpenGL primitive type for rendering (e.g., GL_TRIANGLES, GL_QUADS, GL_POINTS).
+        :param visible: Boolean for model visibility.
         '''
 
         print('+ Initializing {}'.format(self.__class__.__name__))
@@ -59,12 +66,6 @@ class BaseModel:
             self.mesh.textures.append(Texture('lena.bmp'))
 
         self.name = self.mesh.name
-        #self.vertices = None
-        #self.indices = None
-        #self.normals = None
-        #self.vertex_colors = None
-        #self.textureCoords = None
-        #self.textures = []
 
         # dict of VBOs
         self.vbos = {}
@@ -72,16 +73,22 @@ class BaseModel:
         # dict of attributes
         self.attributes = {}
 
-        # store the position of the model in the scene, ...
+        # store the position of the model in the scene
         self.M = M
 
-        # We use a Vertex Array Object to pack all buffers for rendering in the GPU (see lecture on OpenGL)
+        # Use a Vertex Array Object to pack all buffers for rendering in the GPU
         self.vao = glGenVertexArrays(1)
 
         # this buffer will be used to store indices, if using shared vertex representation
         self.index_buffer = None
 
     def initialise_vbo(self, name: str, data: Optional[np.ndarray]) -> None:
+        """
+        Creates and binds a Vertex Buffer Object (VBO) for given attribute.
+
+        :param name: Name of the attribute (e.g., 'position', 'normal').
+        :param data: Data array to upload to the VBO.
+        """
         print('Initialising VBO for attribute {}'.format(name))
 
         if data is None:
@@ -112,7 +119,9 @@ class BaseModel:
 
     def bind_shader(self, shader: Union[str, Any]) -> None:
         '''
-        If a new shader is bound, we need to re-link it to ensure attributes are correctly linked.  
+        If a new shader is bound, need to re-link it to ensure attributes are correctly linked.  
+
+        :param shader: Shader program or its name as a string.
         '''
         if self.shader is None or self.shader.name is not shader:
             if isinstance(shader, str):
@@ -125,7 +134,7 @@ class BaseModel:
 
     def bind(self) -> None:
         '''
-        This method stores the vertex data in a Vertex Buffer Object (VBO) that can be uploaded
+        Stores the vertex data in a Vertex Buffer Object (VBO) that can be uploaded
         to the GPU at render time.
         '''
 
@@ -157,7 +166,6 @@ class BaseModel:
         '''
         Draws the model using OpenGL functions.
         :param Mp: The model matrix of the parent object, for composite objects.
-        :param shaders: the shader program to use for drawing
         '''
 
         if self.visible:
@@ -219,6 +227,14 @@ class DrawModelFromMesh(BaseModel):
     ) -> None:
         '''
         Initialises the model data
+        
+        :param scene: Scene object.
+        :param M: Model matrix.
+        :param mesh: Mesh data.
+        :param name: Model name.
+        :param shader: Shader program.
+        :param visible: Boolean for model visibility.
+        """
         '''
 
         BaseModel.__init__(self, scene=scene, M=M, mesh=mesh, visible=visible)
