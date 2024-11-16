@@ -1,18 +1,28 @@
 '''EnvironmentShader and EnvironmentMappingTexture class.''' 
 
-from BaseModel import BaseModel,DrawModelFromMesh
-from mesh import *
-
+from typing import Optional, Dict
+import numpy as np
+from OpenGL.GL import *
 from OpenGL.GL.framebufferobjects import *
 
+from BaseModel import BaseModel, DrawModelFromMesh
+from mesh import Mesh
 from cubeMap import CubeMap
-
-from shaders import *
-
+from shaders import BaseShaderProgram
 from framebuffer import Framebuffer
+from matutils import translationMatrix, rotationMatrixX, rotationMatrixY, frustumMatrix
 
 class EnvironmentShader(BaseShaderProgram):
-    def __init__(self, name='environment', map=None):
+    '''
+    Shader for rendering environments.
+    '''
+    def __init__(self, name: str = 'environment', map: Optional[CubeMap] = None) -> None:
+        '''
+        Initialises environment shaders.
+
+        :param name: Shader program name.
+        :param map: (Optional) Cube map texture.
+        '''
         BaseShaderProgram.__init__(self, name=name)
         self.add_uniform('sampler_cube')
         self.add_uniform('VM')
@@ -21,7 +31,13 @@ class EnvironmentShader(BaseShaderProgram):
 
         self.map = map
 
-    def bind(self, model, M):
+    def bind(self, model: BaseModel, M: np.ndarray) -> None:
+        '''
+        Binds shader program, sets uniforms and activates cube map texture.
+
+        :param model: Model being rendered.
+        :param M: Model matrix.
+        '''
         glUseProgram(self.program)
         if self.map is not None:
             #self.map.update(model.scene)
@@ -48,7 +64,16 @@ class EnvironmentShader(BaseShaderProgram):
 
 
 class EnvironmentMappingTexture(CubeMap):
-    def __init__(self, width=200, height=200):
+    '''
+    Implements cube map for environment mapping.
+    '''
+    def __init__(self, width: int = 200, height: int = 200) -> None:
+        '''
+        Intialises environment mapping cube texture.
+
+        :param width: Cube map face width.
+        :param height: Cube map face height.
+        '''
         CubeMap.__init__(self)
 
         self.done = False
@@ -81,7 +106,13 @@ class EnvironmentMappingTexture(CubeMap):
             fbo.prepare(self, face)
         self.unbind()
 
-    def update(self, scene):
+    def update(self, scene: BaseModel) -> None:
+        '''
+        Updates cube map texture. 
+
+        :param scene: Scene to render.
+        '''
+
         if self.done:
             return
 
@@ -109,4 +140,3 @@ class EnvironmentMappingTexture(CubeMap):
         scene.P = Pscene
 
         self.unbind()
-        

@@ -5,14 +5,22 @@ import numpy as np
 
 from texture import Texture
 
+from typing import Optional, List
+
 class Mesh:
     '''
-    Simple class to hold a mesh data. For now we will only focus on vertices, faces (indices of vertices for each face)
-    and normals.
+    Simple class to hold a mesh data.
     '''
-    def __init__(self, vertices=None, faces=None, normals=None, textureCoords=None, material=Material()):
+    def __init__(self,
+                 vertices: Optional[np.ndarray] = None, 
+                 faces: Optional[np.ndarray] = None,
+                 normals: Optional[np.ndarray] = None,
+                 textureCoords: Optional[np.ndarray] = None, 
+                  material: Material = Material()
+                ):
         '''
         Initialises a mesh object.
+
         :param vertices: A numpy array containing all vertices
         :param faces: [optional] An int array containing the vertex indices for all faces.
         :param normals: [optional] An array of normal vectors, calculated from the faces if not provided.
@@ -34,10 +42,6 @@ class Mesh:
             if faces is not None:
                 print('- {} faces'.format(self.faces.shape[0]))
 
-        #if faces is not None:
-        #    print('- {} vertices per face'.format(self.faces.shape[1]))
-            #print('- vertices ID in range [{},{}]'.format(np.min(self.faces.flatten()), np.max(self.faces.flatten())))
-
         if normals is None:
             if faces is None:
                 print('(W) Warning: the current code only calculates normals using the face vector of indices, which was not provided here.')
@@ -53,11 +57,11 @@ class Mesh:
 
     def calculate_normals(self):
         '''
-        method to calculate normals from the mesh faces.
-        TODO WS3: Fix this code to calculate the correct normals
-        Use the approach discussed in class:
-        1. calculate normal for each face using cross product
-        2. set each vertex normal as the average of the normals over all faces it belongs to.
+        Method to calculate normals from the mesh faces.
+
+        Normals computer by:
+        1. Calculating normal for each face using cross product of two vectors in the face.
+        2. Averaging the normals for each vertex across the faces it belongs to.
         '''
 
         self.normals = np.zeros((self.vertices.shape[0], 3), dtype='f')
@@ -93,7 +97,16 @@ class Mesh:
 
 
 class CubeMesh(Mesh):
-    def __init__(self, texture=None, inside=False):
+    '''
+    Class to represent a cube mesh, inherits from Mesh class.
+    '''
+    def __init__(self, texture: Optional[Texture] = None, inside: bool = False):
+        '''
+        Initialises cube mesh.
+
+        :param texture: An optional texture to apply to the cube.
+        :param inside: If True, the cube's faces are flipped (default: False).
+        '''
 
         vertices = np.array([
 

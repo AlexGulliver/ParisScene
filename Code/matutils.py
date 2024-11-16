@@ -1,8 +1,14 @@
 '''Matrix utilities.'''
 
 import numpy as np
+from typing import List, Union
 
-def scaleMatrix(scale):
+def scaleMatrix(scale: Union[float, List[float]]) -> np.ndarray:
+    '''
+    Scale matrix for scaling an object.
+
+    :param scale: A scalar value for uniform scaling or a list of three values [sx, sy, sz] for non-uniform scaling.
+    '''
     if np.isscalar(scale):
         scale = [scale, scale, scale]
 
@@ -10,14 +16,24 @@ def scaleMatrix(scale):
     return np.diag(scale)
 
 
-def translationMatrix(t):
+def translationMatrix(t: List[float]) -> np.ndarray:
+    '''
+    Generates a translation matrix for moving an object.
+
+    :param t: A list of translation values [tx, ty, tz].
+    '''
     n = len(t)
     T = np.identity(n+1,dtype='f')
     T[:n,-1] = t
     return T
 
 
-def rotationMatrixZ(angle):
+def rotationMatrixZ(angle: float) -> np.ndarray:
+    '''
+    Generates a rotation matrix for rotating an object around the Z axis.
+
+    :param angle: Rotation angle.
+    '''
     c = np.cos(angle)
     s = np.sin(angle)
     R = np.identity(4)
@@ -28,7 +44,12 @@ def rotationMatrixZ(angle):
     return R
 
 
-def rotationMatrixX(angle):
+def rotationMatrixX(angle: float) -> np.ndarray:
+    '''
+    Generates a rotation matrix for rotating an object around the X axis.
+
+    :param angle: Rotation angle.
+    '''
     c = np.cos(angle)
     s = np.sin(angle)
     R = np.identity(4)
@@ -39,7 +60,12 @@ def rotationMatrixX(angle):
     return R
 
 
-def rotationMatrixY(angle):
+def rotationMatrixY(angle: float) -> np.ndarray:
+    '''
+    Generates a rotation matrix for rotating an object around the X axis.
+
+    :param angle: Rotation angle.
+    '''
     c = np.cos(angle)
     s = np.sin(angle)
     R = np.identity(4)
@@ -50,9 +76,10 @@ def rotationMatrixY(angle):
     return R
 
 
-def poseMatrix(position=[0,0,0], orientation=0, scale=1):
+def poseMatrix(position: List[float] = [0, 0, 0], orientation: float = 0, scale: Union[float, List[float]] = 1) -> np.ndarray:
     '''
     Returns a combined TRS matrix for the pose of a model.
+
     :param position: the position of the model
     :param orientation: the model orientation (for now assuming a rotation around the Z axis)
     :param scale: the model scale, either a scalar for isotropic scaling, or vector of scale factors
@@ -67,15 +94,16 @@ def poseMatrix(position=[0,0,0], orientation=0, scale=1):
     return np.matmul(np.matmul(T,R),S)
 
 
-def orthoMatrix(l,r,t,b,n,f):
+def orthoMatrix(l: float, r: float, t: float, b: float, n: float, f: float) -> np.ndarray:
     '''
     Returns an orthographic projection matrix
-    :param l: left clip plane
-    :param r: right clip plane
-    :param t: top clip plane
-    :param b: bottom clip plane
-    :param n: near clip plane
-    :param f: far clip plane
+
+    :param l: Left clip plane
+    :param r: Right clip plane
+    :param t: Top clip plane
+    :param b: Bottom clip plane
+    :param n: Near clip plane
+    :param f: Far clip plane
     :return: A 4x4 orthographic projection matrix
     '''
     return np.array(
@@ -87,7 +115,18 @@ def orthoMatrix(l,r,t,b,n,f):
         ]
     )
 
-def frustumMatrix(l,r,t,b,n,f):
+def frustumMatrix(l: float, r: float, t: float, b: float, n: float, f: float) -> np.ndarray:
+    '''
+    Returns a frustum projection matrix (perspective projection).
+
+    :param l: Left clip plane.
+    :param r: Right clip plane.
+    :param t: Top clip plane.
+    :param b: Bottom clip plane.
+    :param n: Near clip plane.
+    :param f: Far clip plane.
+    :return: A 4x4 frustum matrix.
+    '''
     return np.array(
         [
             [ 2*n/(r-l),      0,          (r+l)/(r-l),    0 ],
@@ -99,10 +138,20 @@ def frustumMatrix(l,r,t,b,n,f):
 
 
 # Homogeneous coordinates helpers
-def homog(v):
+def homog(v: List[float]) -> np.ndarray:
+    '''
+    Converts 3D vector to homogeneous coordinates.
+
+    :param v: A 3D vector [x, y, z].
+    '''
     return np.hstack([v,1])
 
-def unhomog(vh):
+def unhomog(vh: np.ndarray) -> np.ndarray:
+    '''
+    Converts 4D vector to 3D coordinates.
+
+    :param vh: A 4D vector [x, y, z, w].
+    '''
     return vh[:-1]/vh[-1]
 
 def matmul(L):
