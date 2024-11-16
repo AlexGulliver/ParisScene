@@ -1,19 +1,22 @@
 '''ShowTexture Class'''
 
 from BaseModel import *
+import numpy as np
 
-def normalize(v):
+def normalize(v: np.ndarray) -> np.ndarray:
     '''
     Normalise a vector
+
     :param v: a vector
     :return: normalised vector
     '''
     return v / np.linalg.norm(v)
 
 
-def lookAt(eye, center, up=np.array([0, 1, 0])):
+def lookAt(eye: np.ndarray, center: np.ndarray, up: np.ndarray = np.array([0, 1, 0])) -> np.ndarray:
     '''
     Calculate the view matrix for a camera at position eye, looking towards the center
+
     :param eye: The position of the camera
     :param center: The position the camera is looking at
     :param up: A vector setting where up is. Default is (0,1,0), no reason to change it.
@@ -42,7 +45,7 @@ class ShowTextureShader(BaseShaderProgram):
     '''
     Base class for rendering the flattened cube.
     '''
-    def __init__(self):
+    def __init__(self) -> None:
         BaseShaderProgram.__init__(self, name='show_texture')
 
         # the main uniform to add is the cube map.
@@ -55,7 +58,8 @@ class ShowTexture(DrawModelFromMesh):
 
     def __init__(self, scene, texture=None):
         '''
-        Initialises the
+        Initialises the ShowTexture object with scene and optional texture.
+        
         :param scene: The scene object.
         :param cube: [optional] if not None, the cubemap texture to draw (can be set at a later stage using the set() method)
         '''

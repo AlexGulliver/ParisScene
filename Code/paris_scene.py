@@ -17,7 +17,7 @@ from environmentMapping import *
 
 class ParisScene(Scene):
     '''
-    Paris Scene Class
+    Paris 2024 Olympic Opening Scene Class
     '''
     def __init__(self):
         Scene.__init__(self)
@@ -47,7 +47,6 @@ class ParisScene(Scene):
         self.parislogo_initial_scale = scaleMatrix([0.5, 0.5, 0.5])
 
         # Models
-
         parislogo = load_obj_file('models/parislogo.obj')
         self.parislogo = DrawModelFromMesh(scene=self, M=np.matmul(self.parislogo_initial_translation, np.matmul(self.parislogo_initial_rotation, self.parislogo_initial_scale)), mesh=parislogo[0], shader=self.shaders)
 
@@ -82,6 +81,9 @@ class ParisScene(Scene):
         self.frame = 0
 
     def logo_animate(self):
+        '''
+        Paris logo animation which rotates it about Y-axis and oscillates vertically.
+        '''
         # Increment frame count
         self.frame += 1
 
@@ -107,18 +109,16 @@ class ParisScene(Scene):
         )
 
     def draw_shadow_map(self):
-        # first we need to clear the scene, we also clear the depth buffer to handle occlusions
+        '''
+        Draws shadow map to handle occlusions and depth.
+        '''
+        # Clear scene and depth buffer to handle occlusions.
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
-
-        # also all models from the table
-        # for model in self.table:
-        #     model.draw()
-
-        # and for the box
-        # for model in self.box:
-        #     model.draw()
-
+        
     def draw_reflections(self):
+        '''
+        Draws skybox and models with reflections.
+        '''
         self.skybox.draw()
 
         for model in self.models:
@@ -127,7 +127,8 @@ class ParisScene(Scene):
     def draw(self, framebuffer=False):
         '''
         Draw all models in the scene
-        :return: None
+        
+        :param framebuffer: Whether to render to a framebuffer.
         '''
         if self.animation_active == True:
             self.logo_animate()
@@ -225,9 +226,5 @@ class ParisScene(Scene):
             self.animation_active = False
 
 if __name__ == '__main__':
-    # initialises the scene object
-    # scene = Scene(shaders='gouraud')
     scene = ParisScene()
-
-    # starts drawing the scene
     scene.run()

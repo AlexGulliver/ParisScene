@@ -7,37 +7,43 @@ from matutils import *
 # we will use numpy to store data in arrays
 import numpy as np
 
+from typing import Optional, Any
+
 
 class Uniform:
     '''
-    We create a simple class to handle uniforms, this is not necessary,
-    but allow to put all relevant code in one place
+    Class to handle uniforms.
     '''
-    def __init__(self, name, value=None):
+    def __init__(self, name: str, value: Any = None) -> None:
         '''
         Initialise the uniform parameter
+
         :param name: the name of the uniform, as stated in the GLSL code
+        :param value: The initial value of the uniform. Defaults to None.
         '''
         self.name = name
         self.value = value
         self.location = -1
 
-    def link(self, program):
+    def link(self, program: int) -> None:
         '''
         This function needs to be called after compiling the GLSL program to fetch the location of the uniform
         in the program from its name
+
         :param program: the GLSL program where the uniform is used
         '''
         self.location = glGetUniformLocation(program=program, name=self.name)
         if self.location == -1:
             print('(E) Warning, no uniform {}'.format(self.name))
 
-    def bind_matrix(self, M=None, number=1, transpose=True):
+    def bind_matrix(self, M: np.ndarray = None, number: int = 1, transpose: bool = True) -> None:
         '''
         Call this before rendering to bind the Python matrix to the GLSL uniform mat4.
         You will need different methods for different types of uniform, but for now this will
         do for the PVM matrix
-        :param number: the number of matrices sent, leave that to 1 for now
+        
+        :param M: (Optional) Matrix to bind to uniform.
+        :param number: The number of matrices sent, leave that to 1 for now
         :param transpose: Whether the matrix should be transposed
         '''
         if M is not None:
@@ -49,7 +55,12 @@ class Uniform:
         else:
             print('(E) Error: Trying to bind as uniform a matrix of shape {}'.format(self.value.shape))
 
-    def bind(self,value):
+    def bind(self, value: Any) -> None:
+        '''
+        Bind a value to the uniform.
+
+        :param value: Value to bind to the uniform.
+        '''
         if value is not None:
             self.value = value
 
@@ -65,17 +76,32 @@ class Uniform:
         else:
             print('Wrong value bound: {}'.format(type(self.value)))
 
-    def bind_int(self, value=None):
+    def bind_int(self, value: int = None) -> None:
+        '''
+        Bind integer value to the uniform.
+
+        :param value: Integer value to bind.
+        '''
         if value is not None:
             self.value = value
         glUniform1i(self.location, self.value)
 
-    def bind_float(self, value=None):
+    def bind_float(self, value: float = None) -> None:
+        '''
+        Bind a float value to the uniform.
+
+        :param value: (Optional) Float value to bind.
+        '''
         if value is not None:
             self.value = value
         glUniform1f(self.location, self.value)
 
-    def bind_vector(self, value=None):
+    def bind_vector(self, value: np.ndarray = None) -> None:
+        '''
+        Bind vector value to the uniform.
+
+        :param value: (Optional) Vector value to bind.
+        '''
         if value is not None:
             self.value = value
         if value.shape[0] == 2:
@@ -87,9 +113,10 @@ class Uniform:
         else:
             print('(E) Error in Uniform.bind_vector(): Vector should be of dimension 2,3 or 4, found {}'.format(value.shape[0]))
 
-    def set(self, value):
+    def set(self, value: Any) -> None:
         '''
-        function to set the uniform value (could also access it directly, of course)
+        Function to set the uniform value.
+        :param value: Value to set for the uniform.
         '''
         self.value = value
 
@@ -99,9 +126,11 @@ class BaseShaderProgram:
     This is the base class for loading and compiling the GLSL shaders.
     '''
 
-    def __init__(self, name=None, vertex_shader=None, fragment_shader=None):
+    def __init__(self, name: str = None, vertex_shader: str = None, fragment_shader: str = None) -> None:
         '''
         Initialises the shaders
+
+        :param name: (Optional) Name of shader program.
         :param vertex_shader: the name of the file containing the vertex shader GLSL code
         :param fragment_shader: the name of the file containing the fragment shader GLSL code
         '''
@@ -152,13 +181,19 @@ class BaseShaderProgram:
         }
 
 
-    def add_uniform(self, name):
+    def add_uniform(self, name: str) -> None:
+        '''
+        Add new uniform to shader program.
+
+        :param name: Name of uniform to add.
+        '''
         self.uniforms[name] = Uniform(name)
 
-    def compile(self, attributes):
+    def compile(self, attributes: dict) -> None:
         '''
         Call this function to compile the GLSL codes for both shaders.
-        :return:
+        
+        :param attributes: A dictionary of attribute names and their locations in the shader.
         '''
         print('Compiling GLSL shaders [{}]...'.format(self.name))
         try:
@@ -166,10 +201,6 @@ class BaseShaderProgram:
             glAttachShader(self.program, shaders.compileShader(self.vertex_shader_source, shaders.GL_VERTEX_SHADER))
             glAttachShader(self.program, shaders.compileShader(self.fragment_shader_source, shaders.GL_FRAGMENT_SHADER))
 
-            #self.program = shaders.compileProgram(
-            #    shaders.compileShader(self.vertex_shader_source, shaders.GL_VERTEX_SHADER),
-            #    shaders.compileShader(self.fragment_shader_source, shaders.GL_FRAGMENT_SHADER)
-            #)
         except RuntimeError as error:
             print('(E) An error occured while compiling {} shader:\n {}\n... forwarding exception...'.format(self.name, error)),
             raise error
@@ -185,15 +216,23 @@ class BaseShaderProgram:
         for uniform in self.uniforms:
             self.uniforms[uniform].link(self.program)
 
-    def bindAttributes(self, attributes):
+    def bindAttributes(self, attributes: dict) -> None:
+        '''
+        Bind shader attributes to correct locations.
+
+        :param attributes: Dictionary of attribute names and locations.
+        '''
         # bind all shader attributes to the correct locations in the VAO
         for name, location in attributes.items():
             glBindAttribLocation(self.program, location, name)
             print('Binding attribute {} to location {}'.format(name, location))
 
-    def bind(self, model, M):
+    def bind(self, model, M: np.ndarray) -> None:
         '''
-        Call this function to enable this GLSL Program (you can have multiple GLSL programs used during rendering!)
+        Bind shader program to a model for rendering.
+
+        :param model: Model to render with shader.
+        :param M: Model matrix.
         '''
 
         # tell OpenGL to use this shader program for rendering
@@ -210,11 +249,11 @@ class PhongShader(BaseShaderProgram):
     '''
     This is the base class for loading and compiling the GLSL shaders.
     '''
-    def __init__(self, name='phong'):
+    def __init__(self, name: str = 'phong') -> None:
         '''
         Initialises the shaders
-        :param vertex_shader: the name of the file containing the vertex shader GLSL code
-        :param fragment_shader: the name of the file containing the fragment shader GLSL code
+
+        :param name: The name of the shader program (defaults to 'phong').
         '''
 
         BaseShaderProgram.__init__(self, name=name)
@@ -241,9 +280,12 @@ class PhongShader(BaseShaderProgram):
 
         }
 
-    def bind(self, model, M):
+    def bind(self, model: 'Model', M: np.ndarray) -> None:
         '''
         Call this function to enable this GLSL Program (you can have multiple GLSL programs used during rendering!)
+
+        :param model: Model that contains scene data.
+        :param M: Model matrix.
         '''
 
         P = model.scene.P
@@ -279,43 +321,59 @@ class PhongShader(BaseShaderProgram):
         # bind the light properties
         self.bind_light_uniforms(model.scene.light, V)
 
-    def bind_light_uniforms(self, light, V):
+    def bind_light_uniforms(self, light: 'Light', V: np.ndarray) -> None:
+        '''
+        Bind light-related uniform variables to shader.
+
+        :param light: Light object containing the light properties.
+        :param V: View matrix used to transform the light's position to camera space. 
+        '''
         self.uniforms['light'].bind_vector(unhomog(np.dot(V, homog(light.position))))
         self.uniforms['Ia'].bind_vector(np.array(light.Ia, 'f'))
         self.uniforms['Id'].bind_vector(np.array(light.Id, 'f'))
         self.uniforms['Is'].bind_vector(np.array(light.Is, 'f'))
 
-    def bind_material_uniforms(self, material):
+    def bind_material_uniforms(self, material: 'Material') -> None:
+        '''
+        Bind material-related uniform variables to shader.
+
+        :param material: Material object containing material properties.
+        '''
         self.uniforms['Ka'].bind_vector(np.array(material.Ka, 'f'))
         self.uniforms['Kd'].bind_vector(np.array(material.Kd, 'f'))
         self.uniforms['Ks'].bind_vector(np.array(material.Ks, 'f'))
         self.uniforms['Ns'].bind_float(material.Ns)
 
-    def add_uniform(self, name):
+    def add_uniform(self, name: str) -> None:
+        '''
+        Add new uniform variable to shader.
+
+        :param name: Name of new uniform variable.
+        '''
         if name in self.uniforms:
             print('(W) Warning re-defining already existing uniform %s' % name)
         self.uniforms[name] = Uniform(name)
 
-    def unbind(self):
+    def unbind(self) -> None:
         glUseProgram(0)
 
 
 class FlatShader(PhongShader):
-    def __init__(self):
+    def __init__(self) -> None:
         PhongShader.__init__(self, name='flat')
 
 
 class GouraudShader(PhongShader):
-    def __init__(self):
+    def __init__(self) -> None:
         PhongShader.__init__(self, name='gouraud')
 
 
 class BlinnShader(PhongShader):
-    def __init__(self):
+    def __init__(self) -> None:
         PhongShader.__init__(self, name='blinn')
 
 
 class TextureShader(PhongShader):
-    def __init__(self):
+    def __init__(self) -> None:
         PhongShader.__init__(self, name='texture')
 

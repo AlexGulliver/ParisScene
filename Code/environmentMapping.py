@@ -46,8 +46,6 @@ class EnvironmentShader(BaseShaderProgram):
             self.map.bind()
             self.uniforms['sampler_cube'].bind(0)
 
-
-
         P = model.scene.P  # get projection matrix from the scene
         V = model.scene.camera.V  # get view matrix from the camera
 

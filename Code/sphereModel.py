@@ -2,7 +2,6 @@
 
 from BaseModel import BaseModel
 from matutils import poseMatrix
-# imports all openGL functions
 from OpenGL.GL import *
 import numpy as np
 from mesh import Mesh
@@ -11,7 +10,17 @@ from texture import Texture
 
 
 class Sphere(Mesh):
-    def __init__(self, nvert=10, nhoriz=20, material=Material(Ka=[0.5,0.5,0.5], Kd=[0.6,0.6,0.9], Ks=[1.,1.,0.9], Ns=15.0)):
+    '''
+    Sphere class.
+    '''
+    def __init__(self, nvert: int = 10, nhoriz: int = 20, material: Material = Material(Ka=[0.5, 0.5, 0.5], Kd=[0.6, 0.6, 0.9], Ks=[1.0, 1.0, 0.9], Ns=15.0)) -> None:
+        '''
+        Initialises a Sphere mesh.
+
+        :param nvert: The number of vertical slices (latitude) of the sphere. Default is 10.
+        :param nhoriz: The number of horizontal slices (longitude) of the sphere. Default is 20.
+        :param material: The material properties of the sphere. Default material is a dull grey with a bluish tint.
+        '''
         n = (nvert-1)*nhoriz+2
         vertices = np.zeros((n, 3), 'f')
         vertex_colors = np.zeros((n, 3), 'f')

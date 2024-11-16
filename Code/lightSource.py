@@ -6,8 +6,7 @@ from typing import List, Optional
 
 class LightSource:
     '''
-    Base class for maintaining a light source in the scene. Inheriting from Sphere allows to visualize the light
-    source position easily.
+    Base class for maintaining a light source in the scene.
     '''
     def __init__(
             self, 

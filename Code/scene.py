@@ -21,9 +21,13 @@ class Scene:
     '''
     This is the main class for adrawing an OpenGL scene using the PyGame library
     '''
-    def __init__(self, width=800, height=600, shaders=None):
+    def __init__(self, width: int = 800, height: int = 600, shaders: str = None) -> None:
         '''
         Initialises the scene
+
+        :param width: The width of the window. Defaults to 800.
+        :param height: The height of the window. Defaults to 600.
+        :param shaders: The default shader program to use. Defaults to 'flat' shader if None.
         '''
 
         self.window_size = (width, height)
@@ -84,35 +88,31 @@ class Scene:
         # This class will maintain a list of models to draw in the scene,
         self.models = []
 
-    def add_model(self, model):
+    def add_model(self, model: 'Model') -> None:
         '''
-        This method just adds a model to the scene.
+        Adds model to scene. 
+
         :param model: The model object to add to the scene
-        :return: None
         '''
-
-        # bind the default shader to the mesh
-        #model.bind_shader(self.shaders)
-
-        # and add to the list
         self.models.append(model)
 
-    def add_models_list(self, models_list):
+    def add_models_list(self, models_list: list['Model']) -> None:
         '''
-        This method just adds a model to the scene.
-        :param model: The model object to add to the scene
-        :return: None
+        Adds a list of models to scene.
+
+        :param models_list: The list of model objects to add to the scene.
         '''
         for model in models_list:
             self.add_model(model)
 
-    def draw(self, framebuffer=False):
+    def draw(self, framebuffer: bool = False) -> None:
         '''
         Draw all models in the scene
-        :return: None
+
+        :param framebuffer: Draws to framebuffer if True.
         '''
 
-        # first we need to clear the scene, we also clear the depth buffer to handle occlusions
+        # Clear scene and framebuffer to handle occlusions
         if not framebuffer:
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT)
 
@@ -130,9 +130,10 @@ class Scene:
         if not framebuffer:
             pygame.display.flip()
 
-    def keyboard(self, event):
+    def keyboard(self, event: pygame.event.Event) -> None:
         '''
-        Method to process keyboard events. Check Pygame documentation for a list of key events
+        Method to process keyboard events.
+
         :param event: the event object that was raised
         '''
         if event.key == pygame.K_q:
@@ -149,7 +150,7 @@ class Scene:
                 glPolygonMode(GL_FRONT_AND_BACK, GL_LINE)
                 self.wireframe = True
 
-    def pygameEvents(self):
+    def pygameEvents(self) -> None:
         '''
         Method to handle PyGame events for user interaction.
         '''
@@ -165,8 +166,6 @@ class Scene:
             elif event.type == pygame.MOUSEBUTTONDOWN:
                 mods = pygame.key.get_mods()
                 if event.button == 4:
-                    #pass
-                    #TODO: WS2
                     if mods & pygame.KMOD_CTRL:
                         self.light.position *= 1.1
                         self.light.update()
@@ -174,8 +173,6 @@ class Scene:
                         self.camera.distance = max(1, self.camera.distance - 1)
 
                 elif event.button == 5:
-                    #pass
-                    #TODO: WS2
                     if mods & pygame.KMOD_CTRL:
                         self.light.position *= 0.9
                         self.light.update()
@@ -185,8 +182,6 @@ class Scene:
             elif event.type == pygame.MOUSEMOTION:
                 if pygame.mouse.get_pressed()[0]:
                     if self.mouse_mvt is not None:
-                        self.mouse_mvt = pygame.mouse.get_rel()
-                        #TODO: WS2
                         self.camera.center[0] -= (float(self.mouse_mvt[0]) / self.window_size[0])
                         self.camera.center[1] -= (float(self.mouse_mvt[1]) / self.window_size[1])
                     else:
@@ -195,7 +190,6 @@ class Scene:
                 elif pygame.mouse.get_pressed()[2]:
                     if self.mouse_mvt is not None:
                         self.mouse_mvt = pygame.mouse.get_rel()
-                        #TODO: WS2
                         self.camera.phi -= (float(self.mouse_mvt[0]) / self.window_size[0])
                         self.camera.psi -= (float(self.mouse_mvt[1]) / self.window_size[1])
                     else:
@@ -203,7 +197,7 @@ class Scene:
                 else:
                     self.mouse_mvt = None
 
-    def run(self):
+    def run(self) -> None:
         '''
         Draws the scene in a loop until exit.
         '''

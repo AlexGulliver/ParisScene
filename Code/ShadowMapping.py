@@ -10,11 +10,23 @@ from texture import Texture
 from framebuffer import Framebuffer
 
 
-def normalize(v):
+def normalize(v: np.ndarray) -> np.ndarray:
+    '''
+    Normalise given vector.
+    
+    :param v: Vector to normalise.
+    '''
     return v / np.linalg.norm(v)
 
 
-def lookAt(eye, center, up=np.array([0, 1, 0])):
+def lookAt(eye: np.ndarray, center: np.ndarray, up: np.ndarray = np.array([0, 1, 0])) -> np.ndarray:
+    '''
+    Create view matrix for camera using "LookAt" approach.
+
+    :param eye: Camera position (eye position).
+    :param center: Point in world space camera is looking at.
+    :param up: Up vector.
+    '''
     f = normalize(center - eye)
     u = normalize(up)
 
@@ -37,7 +49,7 @@ class ShowTextureShader(BaseShaderProgram):
     '''
     Base class for rendering the flattened cube.
     '''
-    def __init__(self):
+    def __init__(self) -> None:
         BaseShaderProgram.__init__(self, name='show_texture')
 
         # the main uniform to add is the cube map.
@@ -45,14 +57,20 @@ class ShowTextureShader(BaseShaderProgram):
 
 
 class ShadowMappingShader(PhongShader):
-    def __init__(self, shadow_map=None):
+    def __init__(self, shadow_map: 'ShadowMap' = None) -> None:
         PhongShader.__init__(self, name='shadow_mapping')
         self.add_uniform('shadow_map')
         #self.add_uniform('old_map')
         self.add_uniform('shadow_map_matrix')
         self.shadow_map = shadow_map
 
-    def bind(self, model, M):
+    def bind(self, model: 'Model', M: np.ndarray) -> None:
+        '''
+        Bind shader with provided model and matrix, including shadow map.
+
+        :param model: Model containing scene data.
+        :param M: Model matrix.
+        '''
         PhongShader.bind(self, model, M)
         self.uniforms['shadow_map'].bind(1)
 
@@ -75,9 +93,10 @@ class ShowTexture(DrawModelFromMesh):
     Class for drawing the cube faces flattened on the screen (for debugging purposes)
     '''
 
-    def __init__(self, scene, texture=None):
+    def __init__(self, scene: 'Scene', texture: 'Texture' = None) -> None:
         '''
-        Initialises the
+        Initialises the ShowTexture object with scene and optional texture.
+
         :param scene: The scene object.
         :param cube: [optional] if not None, the cubemap texture to draw (can be set at a later stage using the set() method)
         '''
@@ -115,7 +134,14 @@ class ShowTexture(DrawModelFromMesh):
 
 
 class ShadowMap(Texture):
-    def __init__(self, light=None, width=1000, height=1000):
+    def __init__(self, light: 'Light' = None, width: int = 1000, height: int = 1000) -> None:
+        '''
+        Intialise ShadowMap object with light source, width and height for texture.
+
+        :param light: Light source casting shadows.
+        :param width: Width of shadow map texture.
+        :param height: Height of shadow map texture.
+        '''
 
         # we save the light source
         self.light = light
@@ -148,7 +174,13 @@ class ShadowMap(Texture):
 
         self.V = None
 
-    def render(self, scene, target=[0, 0, 0]):
+    def render(self, scene: 'Scene', target: np.ndarray = np.array([0, 0, 0])) -> None:
+        '''
+        Render shadow map by setting camera's view and projection matrices.
+
+        :param scene: Scene to render shadows for.
+        :param target: Target point in the world space to look at.
+        '''
         # backup the view matrix and replace with the new one
         if self.light is not None:
             self.P = frustumMatrix(-1.0, +1.0, -1.0, +1.0, 1.0, 20.0)
